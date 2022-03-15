@@ -1,29 +1,18 @@
-const Table = require("./table.js")
-const Page = require("./page.js")
-const dados = require("./leitura.js")
-const funcoes = require("./funcoes.js")
-let table = new Table()
-let page = new Page()
-var quantTuplas = 20;
-var quantBuckets = funcoes.criaBuckets(10)
+const funcoes = require("./funcoes")
 
-var cont = 0;
-var id = 0;
+class Banco{
+  constructor(quantTuplasPerPage, tamanhoBucket){
+    this.table = funcoes.criaTable(quantTuplasPerPage);
+    this.buckets = funcoes.criaBuckets(this.table, tamanhoBucket); 
 
-  dados().forEach(element => {
-    if(cont == quantTuplas){
-      table.addPage(page);
-      page = new Page();
-      cont = 0;
-    }
-    if(cont != quantTuplas){
-      page.addTuple(element,element)
-      id++;
-      cont++;
-    }
-  });
-  table.addPage(page);
-
+  }
+  findTuple(chave){
+    return funcoes.findTuple(this.buckets,chave)
+  }
+  qtdOverflows(){
+    return funcoes.qtdOverflows(this.buckets)
+  }
   
 
-  module.exports = table;
+}
+  module.exports = Banco;

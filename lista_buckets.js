@@ -5,8 +5,8 @@ class ListaBuckets{
         this.buckets = []
     }
     
-    addBucket(tamanhoDoBucket){
-        this.buckets.push(new Bucket(tamanhoDoBucket))
+    addBucket(tamanhoBucket){
+        this.buckets.push(new Bucket(tamanhoBucket))
     }
 
     getBucket(index){

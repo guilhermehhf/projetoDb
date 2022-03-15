@@ -1,12 +1,18 @@
-const Tuple = require("./tuple.js")
-
 class Table{
     constructor(){
-        this.tuples = [];
+        this.pages = [];
     }
 
-    addTuple(key,data){
-        this.tuples.push(new Tuple(key,data))
+    addPage(page){
+        this.pages.push(page)
+    }
+
+    totalTuplas(){
+        var cont = 0;
+        this.pages.forEach(element=>{
+            cont += element.tuples.length;
+        })
+        return cont;
     }
 }
 

@@ -1,32 +1,33 @@
 const express = require('express')
 const app = express()
 const port = 8081
-const dados = require("./leitura.js")
-const Table = require("./table.js")
+const Banco = require('./banco.js')
 
+let banco;
 
-app.get('/', (req,  res) => {
-  let table = new Table()
-
-  dados().forEach(element => {
-    let hash = parseInt(element.hashCode().toString().slice(0,4))
-    console.log(hash)
-    table.addTuple(hash%dados().length,element)
-  });
-
-  res.send(table)
+app.get("/banco", (req,  res) => {
+  // res.send({data:banco.buckets})
 })
+
+app.get("/banco/:id", (req,  res) => {
+  const inicio = performance.now();
+  let data = banco.findTuple(req.params.id)
+  const fim = performance.now();
+  const tempo = fim - inicio
+  res.send({data:data,tempo:tempo.toFixed(2)})
+})
+
+app.get("/overflows", (req,  res) => {
+  res.send({data:banco.qtdOverflows()})
+})
+
+// Implementar quantidade de colisões
+// app.get("/colisoes", (req,  res) => {
+//   res.send({data:banco.qtdOverflows()})
+// })
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
+  banco = new Banco(50,20)
 })
-
-String.prototype.hashCode = function(){
-  var hash = 0;
-  for (var i = 0; i < this.length; i++) {
-      var character = this.charCodeAt(i);
-      hash = ((hash<<5)-hash)+character;
-      hash = hash & hash; // Convert to 32bit integer
-  }
-  return Math.abs(hash);
-}

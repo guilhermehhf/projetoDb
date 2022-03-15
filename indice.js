@@ -1,4 +1,4 @@
-class IndiceHash{
+class Indice{
     constructor(key, page){
         this.key = key;
         this.page = page
@@ -12,4 +12,4 @@ class IndiceHash{
     }
 }
 
-module.exports = IndiceHash
+module.exports = Indice

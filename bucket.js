@@ -1,41 +1,48 @@
-const IndiceHash = require("./indice_hash.js")
+const Indice = require("./indice.js")
 
 class Bucket{
     constructor(tamanhoMax){
-        this.listaDeIndicesHash = [];
+        this.listaDeIndices = [];
         this.tamanhoMax = tamanhoMax;
         this.overFlow;
     }
     
-    addIndiceHash(chave,page){
-        if(this.listaDeIndicesHash.length < this.tamanhoMax){
-            this.listaDeIndicesHash.push(new IndiceHash(chave,page));
+    addIndice(chave,page){
+        if(this.listaDeIndices.length < this.tamanhoMax){
+            this.listaDeIndices.push(new Indice(chave,page));
         }
         else if(this.overFlow == undefined){
             this.overFlow = new Bucket(this.tamanhoMax)
-            this.overFlow.addIndiceHash(chave,page);
+            this.overFlow.addIndice(chave,page);
             
         }else{
-            this.overFlow.addIndiceHash(chave,page);
+            this.overFlow.addIndice(chave,page);
         }
     }
 
-    findChave(chave){
-        for(i = 0; i < this.listaDeIndicesHash.length; i++){
-            if(this.listaDeIndicesHash[i].getKey().localeCompare(chave) == 0){
-                return this.listaDeIndicesHash[i].getPage()
+    returnBucketIndice(chave){
+        for(i = 0; i < this.listaDeIndices.length; i++){
+            if(this.listaDeIndices[i].getKey().localeCompare(chave) == 0){
+                return this.listaDeIndices[i]
             }
         }
-        return this.overFlow.findChave(chave)
+        return this.overFlow.returnPage(chave)
     }
 
     getAll(){
-        console.log(this.listaDeIndicesHash.length)
         if(this.overFlow != undefined){
-            return this.listaDeIndicesHash.concat(this.overFlow.getAll())
+            return this.listaDeIndices.concat(this.overFlow.getAll())
         }
         
-        return this.listaDeIndicesHash
+        return this.listaDeIndices
+    }
+
+    getOverflows(){
+        if(this.overFlow == undefined){
+            return 0
+        }else{
+            return 1 + this.overFlow.getOverflows()
+        }
     }
 }
 
