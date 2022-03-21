@@ -1,0 +1,31 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Proj Banco de dados</title>
+</head>
+
+<body>
+  <h1>Proj Banco de dados</h1>
+  <ul id="tuplas">
+  </ul>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+
+<script>
+  axios.get('http://localhost:8081/')
+    .then(response => console.log(response))
+    .catch(error => console.log(error))
+
+  const criaListaDinamica = (tuplas) => {
+    const ulTuplas = document.getElementById('tuplas')
+    tuplas.map(tupla => {
+      const listaTuplas = document.createElement('ol')
+      listaTuplas.innerHTML = `Data: ${tupla.data} Overflows: ${tupla.overflows}`
+      ulTuplas.appendChild(listaTuplas)
+    })
+  }
+</script>
+
+</html>
