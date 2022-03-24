@@ -53,11 +53,22 @@ function preencheOsBuckets(table,buckets){
 
 function findTuple(buckets,chave){
     let chaveHash = funcHash(chave)
-    let indice = buckets.getBucket(chaveHash).returnBucketIndice(chave)
-    result = indice.getPage().tuples.find(tuple=>{
-        return tuple.getId() == chave
-    })
-    return result
+    let acessoMemoria = 0
+    
+    try {
+        let indice = buckets.getBucket(chaveHash).returnBucketIndice(chave)
+
+        result = indice.getPage().tuples.find(tuple=>{
+
+            return tuple.getId() == chave
+        })
+        acessoMemoria++
+        return {result,acessoMemoria}
+
+    } catch (error) {
+        return {error: "Tupla não encontrada", acessoMemoria}
+    }
+    
 }
 
 function qtdOverflows(buckets){
@@ -68,23 +79,43 @@ function qtdOverflows(buckets){
     return cont
 }
 
+function qtdColisoes(buckets){
+    let cont = 0;
+    buckets.buckets.forEach(bucket=>{
+        cont += bucket.getColisoes()
+    })
+    return cont
+}
 
 function funcHash(chave){
-    return parseInt(chave.hashCode().toString().slice(0,4))%quantBuckets
+    return parseInt(chave.hashFunction().toString().slice(0,4))%quantBuckets
 }
 
-function funcHashPorId(chave){
-    return parseInt(chave)%quantBuckets
-}
+// String.prototype.hashCode = function(){
+//     var hash = 0;
+//     for (var i = 0; i < this.length; i++) {
+//         var character = this.charCodeAt(i);
+//         hash = ((hash<<5)-hash)+character;
+//         hash = hash & hash; // Convert to 32bit integer
+//     }
+//     return Math.abs(hash);
+// }
 
-String.prototype.hashCode = function(){
-    var hash = 0;
+String.prototype.hashFunction = function(){
+    var result = 0
     for (var i = 0; i < this.length; i++) {
-        var character = this.charCodeAt(i);
-        hash = ((hash<<5)-hash)+character;
-        hash = hash & hash; // Convert to 32bit integer
+        var characterAscii = this.charCodeAt(i);
+        result += Math.pow(characterAscii, (i + 1))
     }
-    return Math.abs(hash);
+    return Math.abs(result)
 }
 
-module.exports = {criaBuckets, preencheOsBuckets, funcHash, findTuple, criaTable, qtdOverflows}
+// function universalHashFunction(key){
+//     var p = 11
+//     a = Math.random(1,p)
+//     b = Math.random(0,p)
+
+//     calculo = ((a*key+b)%p)%quantBuckets
+// }
+
+module.exports = {criaBuckets, preencheOsBuckets, funcHash, findTuple, criaTable, qtdOverflows, qtdColisoes}

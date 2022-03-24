@@ -10,12 +10,11 @@ class Bucket{
     addIndice(chave,page){
         if(this.listaDeIndices.length < this.tamanhoMax){
             this.listaDeIndices.push(new Indice(chave,page));
+            if(this.listaDeIndices.length == this.tamanhoMax){
+                this.overFlow = new Bucket(this.tamanhoMax)
+            }
         }
-        else if(this.overFlow == undefined){
-            this.overFlow = new Bucket(this.tamanhoMax)
-            this.overFlow.addIndice(chave,page);
-            
-        }else{
+        else {
             this.overFlow.addIndice(chave,page);
         }
     }
@@ -26,7 +25,8 @@ class Bucket{
                 return this.listaDeIndices[i]
             }
         }
-        return this.overFlow.returnPage(chave)
+        
+        return this.overFlow.returnBucketIndice(chave)
     }
 
     getAll(){
@@ -42,6 +42,17 @@ class Bucket{
             return 0
         }else{
             return 1 + this.overFlow.getOverflows()
+        }
+    }
+
+    getColisoes(){
+        if(this.overFlow == undefined){
+            return 0
+        }else{
+            if(this.overFlow.listaDeIndices.length != 0){
+                return 1 + this.overFlow.getColisoes()
+            }
+            return 0;
         }
     }
 }

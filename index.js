@@ -9,16 +9,13 @@ app.get("/banco", (req,  res) => {
   // res.send({data:banco.buckets})
 })
 
-app.get("/banco/:id", (req,  res) => {
-  const inicio = performance.now();
-  let data = banco.findTuple(req.params.id)
-  const fim = performance.now();
-  const tempo = fim - inicio
-  res.send({data:data,tempo:tempo.toFixed(2)})
+app.get("/banco/:key", (req,  res) => {
+  let result = banco.findTuple(req.params.key)
+  res.send({data:result})
 })
 
 app.get("/overflows", (req,  res) => {
-  res.send({data:banco.qtdOverflows()})
+  res.send({overflows:banco.qtdOverflows(), colisões: banco.qtdColisoes()})
 })
 
 // Implementar quantidade de colisões
