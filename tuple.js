@@ -1,11 +1,11 @@
 class Tuple{
-    constructor(id,data){
-        this.id = id;
+    constructor(key,data){
+        this.key = key;
         this.data = data;
     }
 
     getId(){
-        return this.id
+        return this.key
     }
     getData(){
         return this.data

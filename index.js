@@ -1,30 +1,31 @@
 const express = require('express')
 const app = express()
 const port = 8081
+const cors = require('cors')
 const Banco = require('./banco.js')
 
-let banco;
+let banco = new Banco()
 
-app.get("/banco", (req,  res) => {
-  // res.send({data:banco.buckets})
+app.use(cors())
+
+app.get("/banco/tupla/:key", (req,  res) => {
+  res.send(banco.findTuple(req.params.key))
 })
 
-app.get("/banco/:key", (req,  res) => {
-  let result = banco.findTuple(req.params.key)
-  res.send({data:result})
+app.get("/info-banco", (req,  res) => {
+  res.send({overflows:banco.qtdOverflows(), colisoes: banco.qtdColisoes(), tuplas: banco.qtdTuplas(), paginas: banco.qtdPaginas(), buckets: banco.qtdBuckets()})
 })
 
-app.get("/overflows", (req,  res) => {
-  res.send({overflows:banco.qtdOverflows(), colisões: banco.qtdColisoes()})
+app.get("/banco/:tamanhoPaginas/:tamanhoBuckets", (req,  res) => {
+  try {
+    banco.criaBanco(req.params.tamanhoPaginas,req.params.tamanhoBuckets)
+    res.send({result:"Ok"})
+  } catch (error) {
+    res.send({result:"Error"})
+  }
+  
 })
-
-// Implementar quantidade de colisões
-// app.get("/colisoes", (req,  res) => {
-//   res.send({data:banco.qtdOverflows()})
-// })
 
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-  banco = new Banco(50,20)
 })

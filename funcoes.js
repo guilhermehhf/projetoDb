@@ -10,7 +10,6 @@ function criaTable(quantTuplas){
     let table = new Table()
     let page = new Page()
     var cont = 0;
-    var id = 0;
 
     dados().forEach(element => {
         if(cont == quantTuplas){
@@ -20,7 +19,6 @@ function criaTable(quantTuplas){
         }
         if(cont != quantTuplas){
         page.addTuple(element,element)
-        id++;
         cont++;
         }
     });
@@ -57,16 +55,14 @@ function findTuple(buckets,chave){
     
     try {
         let indice = buckets.getBucket(chaveHash).returnBucketIndice(chave)
-
-        result = indice.getPage().tuples.find(tuple=>{
-
+        tupla = indice.getPage().tuples.find(tuple=>{
             return tuple.getId() == chave
         })
         acessoMemoria++
-        return {result,acessoMemoria}
+        return {tupla,acessoMemoria,chaveHash,page:indice.getPage()}
 
     } catch (error) {
-        return {error: "Tupla não encontrada", acessoMemoria}
+        return {tupla:{key:"",data:""}, acessoMemoria, chaveHash, page:undefined}
     }
     
 }

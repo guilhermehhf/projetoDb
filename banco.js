@@ -1,31 +1,42 @@
 const funcoes = require("./funcoes")
 
 class Banco{
-  constructor(quantTuplasPerPage, tamanhoBucket){
+  constructor(){
+    this.table;
+    this.buckets;
+  }
+
+  criaBanco(quantTuplasPerPage, tamanhoBucket){
     this.table = funcoes.criaTable(quantTuplasPerPage);
     this.buckets = funcoes.criaBuckets(this.table, tamanhoBucket); 
-    this.totalOverflows;
-    this.totalColisoes;
   }
   
   findTuple(chave){
-    return funcoes.findTuple(this.buckets,chave)
+    let resultado = funcoes.findTuple(this.buckets,chave)
+    resultado.page = this.table.getPageIndex(resultado.page)
+    return resultado
+  }
+
+  qtdTuplas(){
+    return this.table.totalTuplas()
+  }
+
+  qtdPaginas(){
+    return this.table.pages.length
+  }
+
+  qtdBuckets(){
+    return this.buckets.buckets.length
   }
 
   qtdOverflows(){
-    if(this.totalOverflows == undefined){
-      this.totalOverflows = funcoes.qtdOverflows(this.buckets)
-    }
-    return this.totalOverflows
+    return funcoes.qtdOverflows(this.buckets)
   }
 
   qtdColisoes(){
-    if(this.totalColisoes == undefined){
-      console.log("entrou")
-      this.totalColisoes = funcoes.qtdColisoes(this.buckets)
-    }
-    return this.totalColisoes
+    return funcoes.qtdColisoes(this.buckets)
   }
 
 }
+
   module.exports = Banco;

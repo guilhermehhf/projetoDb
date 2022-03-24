@@ -1,0 +1,110 @@
+<html>
+  <link rel="stylesheet" href="estilo.css"/>
+<head>  
+  <meta charset="utf-8">
+  <title>Proj Banco de dados</title>
+</head>
+
+<body> 
+        
+  <div id = "Fundo">
+    <div id = "Proj">  
+      <h1>Proj Banco de dados</h1>   
+      <div>
+        
+        <div>
+          <h4>Tamanho das páginas:</h4>
+          <input type="text" id="pagina">
+        </div>
+        <div>
+          <h4>Tamanho dos buckets:</h4>
+          <input type="text" id="bucket">
+        </div>
+        <button id="button" onclick="criaBanco()" style = "margin-top: 20px">Cria</button>
+        <ul id="overflows_colisoes">
+        </ul> 
+        
+        <div>
+          <h4>Chave:</h4>
+        <input type="text" id="entrada">
+        </div>
+        
+        <button id="button" onclick="mostrar()" style = "margin-top: 20px">Enviar</button>
+  
+      </div>
+            
+  
+            <ul id="tuplas">
+            </ul> 
+    
+
+    </div>
+  </div>
+  
+      
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+
+<script>
+
+
+  async function criaBanco() {
+    var paginas = document.getElementById('pagina').value
+    var buckets = document.getElementById('bucket').value
+    
+    var banco = await axios.get(`http://localhost:8081/banco/${paginas}/${buckets}`)
+      .then(response => response.data)
+
+    var infoDoBanco = await axios.get(`http://localhost:8081/info-banco`)
+      .then(response => response.data)
+
+    var ulInfo = document.getElementById('overflows_colisoes')
+    ulInfo.innerHTML = '';
+    var overflows = document.createElement('li')
+    var colisao = document.createElement('li')
+    var tuplas = document.createElement('li')
+    var paginas = document.createElement('li')
+    var buckets = document.createElement('li')
+
+    overflows.innerHTML = `Overflows: ${infoDoBanco.overflows}`
+    colisao.innerHTML = `Colisões: ${infoDoBanco.colisoes}`
+    tuplas.innerHTML = `Tuplas: ${infoDoBanco.tuplas}`
+    paginas.innerHTML = `Paginas: ${infoDoBanco.paginas}`
+    buckets.innerHTML = `Buckets: ${infoDoBanco.buckets}`
+
+    ulInfo.appendChild(overflows)
+    ulInfo.appendChild(colisao)
+    ulInfo.appendChild(tuplas)
+    ulInfo.appendChild(paginas)
+    ulInfo.appendChild(buckets)
+      
+  }
+
+  async function mostrar() {
+    var entrada = document.getElementById('entrada').value
+
+    var tupla = await axios.get(`http://localhost:8081/banco/tupla/${entrada}`)
+      .then(response => response.data)
+
+    console.log(tupla)
+
+    var ulTuplas = document.getElementById('tuplas')
+    ulTuplas.innerHTML = '';
+    var data = document.createElement('li')
+    var chaveHash = document.createElement('li')
+    var acessoMemoria = document.createElement('li')
+    var page = document.createElement('li')
+    data.innerHTML = `Data: ${tupla.tupla.data}`
+    ulTuplas.appendChild(data)
+    chaveHash.innerHTML = `Chave Hash: ${tupla.chaveHash}`
+    ulTuplas.appendChild(chaveHash)
+    page.innerHTML = `Acesso a memória: ${tupla.acessoMemoria}`
+    ulTuplas.appendChild(acessoMemoria)
+    page.innerHTML = `Página: ${tupla.page}`
+    ulTuplas.appendChild(page)
+  }
+
+</script>
+
+</html>

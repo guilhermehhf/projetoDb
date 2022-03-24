@@ -14,6 +14,16 @@ class Table{
         })
         return cont;
     }
+    
+    getPageIndex(page){
+        for (let i = 0; i < this.pages.length; i++) {
+            if(page == this.pages[i]){
+                return i + 1
+            }
+        }
+        return '?'
+    }
+
 }
 
 module.exports = Table
